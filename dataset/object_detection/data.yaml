@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['cavity', 'normal', 'spaced']
+
+roboflow:
+  workspace: personal-wpfvb
+  project: dental-disease-detection
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/personal-wpfvb/dental-disease-detection/dataset/1

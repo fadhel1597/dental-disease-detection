@@ -110,6 +110,8 @@ def object_detection():
         'annotated_image_base64': base64.b64encode(result_img).decode('utf-8')  # Encode the image as base64
     }
 
+    os.remove(temp_path)
+
     return response_data
 
 

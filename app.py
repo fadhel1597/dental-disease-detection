@@ -50,9 +50,6 @@ def image_classification():
     if detected_labels == []:
         detected_labels = 'No Class Detected'
 
-    # print(detected_labels)
-
-    # Create a dictionary to store the detected labels
     response = {"detected_labels": detected_labels}
 
     os.remove(temp_path)
@@ -81,8 +78,7 @@ def object_detection():
     colors = [(0, 255, 0), (255, 0, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
     colors = {name: color for name, color in zip(model.names.values(), colors)}
 
-    frame = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    annotator = Annotator(frame, font_size=0.5)
+    annotator = Annotator(image, font_size=0.5)
     boxes = results[0].boxes
 
     results_data = []
@@ -102,19 +98,27 @@ def object_detection():
 
         results_data.append(box_data)
 
-    frame = annotator.result()
-    result_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        annotator.box_label(bbox, class_name, color=color) 
 
+    # Get the annotated image
+    annotated_frame = annotator.result()
+
+    # cv2.imshow("Annotated Image", annotated_frame)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    # Convert the annotated image to base64
+    _, buffer = cv2.imencode('.jpg', annotated_frame)
+    annotated_img_base64 = base64.b64encode(buffer).decode('utf-8')
+
+    # Include the annotated image in the response data dictionary
     response_data = {
         'results_data': results_data,
-        'annotated_image_base64': base64.b64encode(result_img).decode('utf-8')  # Encode the image as base64
+        'annotated_image_base64': annotated_img_base64
     }
 
-    os.remove(temp_path)
-
-    return response_data
+    return jsonify(response_data)
 
 
 if __name__ == "__main__":
-
     app.run(host="0.0.0.0", port=5000, debug=True)  # debug=True causes Restarting with stat
